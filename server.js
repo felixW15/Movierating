@@ -57,8 +57,9 @@ app.post('/api/register', (req, res) => {
       res.status(500).json({ error: 'Internal Server Error' });
       return;
     }
+    const admin = 1;
     // Store user in database
-    pool.query('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', [username, email, hash], (err, result) => {
+    pool.query('INSERT INTO users (username, email, password, admin) VALUES (?, ?, ?, ?)', [username, email, hash, admin], (err, result) => {
       if (err) {
         res.status(400).json({ error: 'Registration failed' });
         return;
