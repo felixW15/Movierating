@@ -1,0 +1,21 @@
+#mtoast {
+    /* (A) POSITION */
+    position: fixed; z-index: 99;
+    top: 5px; right: 5px; 
+    text-align: center;
+    padding-top: 50px;
+    font-size: 38px;
+    /* (B) DIMENSION */
+    width: 400px;
+    height:100px;
+    padding: 10px;   
+    top: 10%;
+    left: 50%;
+    margin-top: -10px;
+    margin-left: -250px;
+    /* (C) COLORS */
+    border: 1px solid #c52828;
+    background: #ffb089;   
+    /* (D) HIDDEN BY DEFAULT */
+    display: none;
+  }

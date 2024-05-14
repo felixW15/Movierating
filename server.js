@@ -85,8 +85,8 @@ app.post('/api/login', (req, res) => {
         return;
       }
       // Generate JWT
-      const token = jwt.sign({ userId: user.ID }, 'abc', { expiresIn: '1h' });
-      res.status(200).json({ token});
+      const token = jwt.sign({ user_id: user.user_id }, 'abc', { expiresIn: '1h' });
+      res.status(200).json({token});
     });
   });
 });
@@ -106,7 +106,7 @@ function verifyToken(req, res, next) {
     if (err) {
       return res.status(401).json({ error: 'Unauthorized' });
     }
-    req.userId = decoded.userId;
+    req.userId = decoded.user_id;
     next();
   });
 }

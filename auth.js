@@ -141,6 +141,7 @@ const token = await fetch(url, options)
     .catch(error => {
         console.error('Error sending data to API:', error);
     });
+    sessionStorage.setItem("accessToken",token.token)
     protectedRoute(token.token);
 }
 
@@ -172,7 +173,7 @@ const options = {
         .then(responseData => {
             console.log('Response from protected API:', responseData);
             const userId = responseData.userId;
-            console.log(userId)
+            console.log(userId);
             window.location.href = 'index.html';
         })
         .catch(error => {
