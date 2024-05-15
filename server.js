@@ -14,9 +14,10 @@ const pool = mysql.createPool({
   user: "testuser",
   password: "testuser",
   database: "mydb",
-  connectionLimit: 10 
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
-
 app.use(express.json());
 
 // Define API endpoint
@@ -68,6 +69,94 @@ app.post('/api/register', (req, res) => {
     });
   });
 });
+
+/* app.post('/api/addPlanToWatch', async(req, res) => {
+  const { movie_id, release_date, title, genre_ids, user_id } = req.body;
+  let connection = await pool.getConnection();
+  try{
+    await connection.beginTransaction();
+    // Store user in database
+    const result1 = await connection.query('SELECT * FROM users WHERE user_id = ?', [user_id]);
+    console.log(result1);
+    const result2 = await connection.query('SELECT * FROM genres WHERE genre_id = ?', [genre_ids[0]]);
+    console.log(result2);
+  }catch (error) {
+    // If an error occurs, rollback the transaction
+    await connection.rollback();
+    console.error('Error executing queries:', error);
+    res.status(500).send('Error executing queries');
+  } finally {
+    // Release the connection back to the pool
+    connection.release();
+  }
+}); */
+
+app.post('/api/addPlanToWatch',async (req, res) => {
+  const { movie_id, release_date, title, genre_ids, user_id } = req.body;
+  let movieNotInTable = await movieInTable(movie_id);
+  console.log(movieNotInTable);
+  /* if(movieNotInTable == 0){ */
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting connection from pool:', err);
+      return res.status(500).send('Error getting connection from pool');
+    }
+
+    // Start a transaction
+    connection.beginTransaction((err) => {
+      if (err) {
+        connection.release();
+        console.error('Error starting transaction:', err);
+        return res.status(500).send('Error starting transaction');
+      }
+      // Execute the first query
+      connection.query(
+        'SELECT * FROM users WHERE user_id = ?', [user_id],
+        (err, result1) => {
+          if (err) {
+            return connection.rollback(() => {
+              connection.release();
+              console.error('Error executing first query:', err);
+              return res.status(500).send('Error executing first query');
+            });
+          }
+          console.log(result1);
+
+          // Execute the second query
+          connection.query(
+            'SELECT * FROM genres WHERE genre_id = ?', [genre_ids[0]],
+            (err, result2) => {
+              if (err) {
+                return connection.rollback(() => {
+                  connection.release();
+                  console.error('Error executing second query:', err);
+                  return res.status(500).send('Error executing second query');
+                });
+              }
+                console.log(result2);
+                connection.release();
+                res.status(200).json({ message: 'Registration successful' });
+              });
+            }
+          );
+        }
+      );
+    });/* }else{
+      console.log("movie exists");
+      return res.status(500).send('Error getting connection from pool');
+    } */
+});
+
+function movieInTable(movie_id){
+  var rowlength = 0;
+    pool.promise().query('SELECT * FROM movies WHERE movie_id = ?', [movie_id]).then(([rows, fields]) => {
+      rowlength= rows.length
+    })
+    .catch(console.log)
+    return new Promise(resolve => {
+        resolve(rowlength);     
+    });
+}
 
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;

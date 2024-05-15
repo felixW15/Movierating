@@ -16,14 +16,13 @@ function createTable(data) {
     th.textContent = "image";
     row.appendChild(th);
     Object.keys(data[0]).forEach((key, index)=> {
-    if((index < 7)&& (index > 2)){
+    if(((index < 7)&& (index > 4)) || index == 9){
         let th = document.createElement('th');
         th.textContent = key;
         row.appendChild(th);
     }
     });
     let th2 = document.createElement('th');
-    th.textContent = "buttons";
     row.appendChild(th2);
 
     // Creating table body
@@ -35,10 +34,18 @@ function createTable(data) {
     img.src = src;
     cell.appendChild(img);
     Object.values(item).forEach((value, index) => {
-        if((index < 7)&& (index > 2)){
+        if(((index < 7)&& (index > 4)) || index == 9){
         let cell = row.insertCell();
         cell.textContent = value;
     }});
+    var movie_id = [];
+    movie_id.push(item.id);
+    var movie_title = [];
+    movie_title.push(item.title);
+    var movie_date = [];
+    movie_date.push(item.release_date);
+    var movie_genres = [];
+    movie_genres.push(item.genre_ids);
     let cell2 = row.insertCell();
     var btn = document.createElement('button');
     btn.innerHTML = "Add to watchlist";
@@ -59,17 +66,15 @@ function createTable(data) {
     var btn2 = document.createElement('button');
     btn2.innerHTML = "Plan to watch";
     btn2.addEventListener("click", (function(e){
-        e = e || window.event;
-        var data = [];
-        var target = e.srcElement || e.target;
-        while (target && target.nodeName !== "TR") {
-            target = target.parentNode;
+        const ptw_data = {
+            movie_id: movie_id[0],
+            release_date: movie_date[0],
+            title: movie_title[0],
+            genre_ids: movie_genres[0],
+            user_id: userId
         }
-        if (target) {
-            var cells = target.getElementsByTagName("td");
-            data.push(cells[2].innerHTML);
-        } 
-        console.log(data[0]);
+        console.log(ptw_data);
+        addPlanToWatch(ptw_data);
     }));
     cell2.appendChild(btn2);
     var btn3 = document.createElement('button');
@@ -92,6 +97,31 @@ function createTable(data) {
     div.appendChild(table);
 }
 
+function addPlanToWatch(data) {
+    const url = 'http://localhost:3000/api/addPlanToWatch'; // Change the URL as per your API endpoint
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json' // Specify the content type
+      },
+      body: JSON.stringify(data) // Convert data to JSON string
+    };
+    
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(responseData => {
+                console.log('Added plan to watch', responseData);
+            })
+            .catch(error => {
+                console.error('Error sending data to API:', error);
+            });
+            }
+
 async function movieGet(pageNumber) {
 var searchQuery = searchInput.value;
 const url = `https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=${pageNumber}&api_key=3344fd8a1c2c21473fa19c4774b39258`
@@ -111,7 +141,7 @@ headers: {
             return response.json();
         })
         .then(responseData => {
-            console.log('Response from protected API:', responseData);
+            console.log('Response from movie API:', responseData);
             return responseData;
         })
         .catch(error => {
@@ -176,6 +206,7 @@ window.onload = function(){
         protectedRoute(sessionStorage.getItem("accessToken"))
     }
 };
+var userId = 0;
 function protectedRoute(data) {
     const url = 'http://localhost:3000/api/protected'; // Change the URL as per your API endpoint
     const options = {
@@ -196,7 +227,7 @@ function protectedRoute(data) {
             })
             .then(responseData => {
                 console.log('Response from protected API:', responseData);
-                const userId = responseData.userId;
+                userId = responseData.userId;
                 console.log(userId);
             })
             .catch(error => {
