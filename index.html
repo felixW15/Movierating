@@ -3,15 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href='https://unpkg.com/css.gg@2.0.0/icons/css/profile.css' rel='stylesheet'>
   <link rel="stylesheet" href="mystyle.css">
   <title>Fetch Example</title>
 </head>
 <body>
+  <div style="text-align:center">
   <input type="text" id="searchInput">
-  <button id="movieButton">get movie</button>
+  <input type="image" id="profileIcon" src="Icons/account.png"><br>
+  <button id="movieButton">search movie</button>
+  </div>
   <div id="mtoast" onclick="this.style.display='none'"></div>
   <div id="tableDiv"></div>
   <div id="pagination"></div>
+  <div id="popup-wrapper" class="popup-wrapper">
+  <div id="popup" class="popup">
+      <span class="close">&times;</span>
+      <label for="" id="popupLabel">Select a rating between 1 and 10</label><br><br>
+      <input type="number" id="quantity" name="quantity" min="1" max="10"><br>
+      <button id="addWatchedButton">Submit</button>
+  </div>
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <label for="" id="modalLabel"></label>
+    </div>
+  
+  </div>
   <script src="client.js"></script> 
 </body>
 </html>

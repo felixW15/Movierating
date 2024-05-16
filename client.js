@@ -60,7 +60,27 @@ function createTable(data) {
             var cells = target.getElementsByTagName("td");
             data.push(cells[1].innerHTML);
         } 
-        console.log(data[0]);
+        const rect = btn.getBoundingClientRect();
+        // Set the popup position
+        popup.style.left = `${rect.left - rect.width - 200}px`;
+        popup.style.top = `${rect.top - rect.height}px`;
+        popup_wrapper.style.display = 'block';
+        addWatchedBtn.addEventListener("click", (function(e){
+            const watched_data = {
+                movie_id: movie_id[0],
+                release_date: movie_date[0],
+                title: movie_title[0],
+                genre_ids: movie_genres[0],
+                rating: rating.value,
+                user_id: userId
+            }
+            if(rating.value>10 || rating.value <1){
+                modal.style.display = "block";
+                modalLabel.innerHTML = "please enter a value between 1 and 10";
+            }else{
+                addWatched(watched_data);
+            }
+        }))
     }));
     cell2.appendChild(btn);
     var btn2 = document.createElement('button');
@@ -73,7 +93,6 @@ function createTable(data) {
             genre_ids: movie_genres[0],
             user_id: userId
         }
-        console.log(ptw_data);
         addPlanToWatch(ptw_data);
     }));
     cell2.appendChild(btn2);
@@ -97,6 +116,29 @@ function createTable(data) {
     div.appendChild(table);
 }
 
+var modal = document.getElementById("myModal");
+var popup_wrapper = document.getElementById("popup-wrapper");
+var modalLabel = document.getElementById("modalLabel");
+var span = document.getElementsByClassName("close")[0];
+var spanModal = document.getElementsByClassName("close")[1];
+var rating = document.getElementById("quantity");
+var addWatchedBtn = document.getElementById("addWatchedButton");
+
+span.onclick = function() {
+    popup_wrapper.style.display = "none";
+}
+spanModal.onclick = function() {
+    modal.style.display = "none";
+}
+window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+    if (event.target == popup_wrapper) {
+        popup_wrapper.style.display = "none";
+      }
+}
+
 function addPlanToWatch(data) {
     const url = 'http://localhost:3000/api/addPlanToWatch'; // Change the URL as per your API endpoint
     const options = {
@@ -115,12 +157,40 @@ function addPlanToWatch(data) {
                 return response.json();
             })
             .then(responseData => {
+                modal.style.display = "block";
+                modalLabel.innerHTML = responseData.message;
                 console.log('Added plan to watch', responseData);
             })
             .catch(error => {
                 console.error('Error sending data to API:', error);
             });
-            }
+}
+
+function addWatched(data) {
+    const url = 'http://localhost:3000/api/addWatched'; // Change the URL as per your API endpoint
+        const options = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json' // Specify the content type
+                },
+                body: JSON.stringify(data) // Convert data to JSON string
+                };
+                    fetch(url, options)
+                        .then(response => {
+                            if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(responseData => {
+                            modal.style.display = "block";
+                            modalLabel.innerHTML = responseData.message;
+                            console.log('Added watched', responseData);
+                        })
+                        .catch(error => {
+                            console.error('Error sending data to API:', error);
+                        });
+}
 
 async function movieGet(pageNumber) {
 var searchQuery = searchInput.value;

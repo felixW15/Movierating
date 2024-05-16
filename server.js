@@ -15,8 +15,7 @@ const pool = mysql.createPool({
   password: "testuser",
   database: "mydb",
   waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+  connectionLimit: 100,
 });
 app.use(express.json());
 
@@ -94,24 +93,24 @@ app.post('/api/register', (req, res) => {
 app.post('/api/addPlanToWatch',async (req, res) => {
   const { movie_id, release_date, title, genre_ids, user_id } = req.body;
   let movieNotInTable = await movieInTable(movie_id);
-  console.log(movieNotInTable);
-  /* if(movieNotInTable == 0){ */
+  if(movieNotInTable == 0){
   pool.getConnection((err, connection) => {
     if (err) {
       console.error('Error getting connection from pool:', err);
       return res.status(500).send('Error getting connection from pool');
     }
-
     // Start a transaction
-    connection.beginTransaction((err) => {
+    /* connection.beginTransaction((err) => {
       if (err) {
         connection.release();
         console.error('Error starting transaction:', err);
         return res.status(500).send('Error starting transaction');
-      }
+      } */
+      const formattedDate = new Date(release_date).toISOString().split('T')[0];
+      console.log(movie_id, formattedDate, title);
       // Execute the first query
       connection.query(
-        'SELECT * FROM users WHERE user_id = ?', [user_id],
+        'INSERT INTO movies (movie_id, release_date, title) VALUES (?, ?, ?)', [movie_id, formattedDate, title],
         (err, result1) => {
           if (err) {
             return connection.rollback(() => {
@@ -120,12 +119,22 @@ app.post('/api/addPlanToWatch',async (req, res) => {
               return res.status(500).send('Error executing first query');
             });
           }
-          console.log(result1);
-
           // Execute the second query
+        connection.query(
+        'INSERT INTO plan_to_watch (user_id, movie_id) VALUES (?, ?)', [user_id, movie_id],
+        (err, result2) => {
+          if (err) {
+            return connection.rollback(() => {
+              connection.release();
+              console.error('Error executing first query:', err);
+              return res.status(500).send('Error executing first query');
+            });
+          }
+          // Execute the third query
+          genre_ids.forEach(element => {
           connection.query(
-            'SELECT * FROM genres WHERE genre_id = ?', [genre_ids[0]],
-            (err, result2) => {
+            'INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)', [movie_id, element],
+            (err, result3) => {
               if (err) {
                 return connection.rollback(() => {
                   connection.release();
@@ -133,24 +142,155 @@ app.post('/api/addPlanToWatch',async (req, res) => {
                   return res.status(500).send('Error executing second query');
                 });
               }
-                console.log(result2);
-                connection.release();
-                res.status(200).json({ message: 'Registration successful' });
               });
+            });
+            res.status(200).json({ message: 'Successfully added the movie to your plan to watch list' });
+            connection.release();
             }
+            );
+          }
           );
         }
       );
-    });/* }else{
+    /* }); */ }else{
+      let notInPlanToWatch = await inPlanToWatch(movie_id, user_id);
+      if(notInPlanToWatch == 0){
       console.log("movie exists");
-      return res.status(500).send('Error getting connection from pool');
-    } */
+      pool.getConnection((err, connection) => {
+        if (err) {
+          console.error('Error getting connection from pool:', err);
+          return res.status(500).send('Error getting connection from pool');
+        }
+        connection.query(
+          'INSERT INTO plan_to_watch (user_id, movie_id) VALUES (?, ?)', [user_id, movie_id],
+          (err, result2) => {
+            if (err) {
+              return connection.rollback(() => {
+                connection.release();
+                console.error('Error executing first query:', err);
+                return res.status(500).send('Error executing first query');
+              });
+            }
+            connection.release();
+          })});
+
+      return res.status(200).json({message: 'Successfully added the movie to your plan to watch list'});
+      }else{
+        return res.status(200).json({message: 'The movie is already in your plan to watch list'});
+      }
+    }
 });
 
-function movieInTable(movie_id){
+app.post('/api/addWatched',async (req, res) => {
+  const { movie_id, release_date, title, genre_ids, rating, user_id } = req.body;
+  let movieNotInTable = await movieInTable(movie_id);
+  if(movieNotInTable == 0){
+  pool.getConnection((err, connection) => {
+    if (err) {
+      console.error('Error getting connection from pool:', err);
+      return res.status(500).send('Error getting connection from pool');
+    }
+      const formattedDate = new Date(release_date).toISOString().split('T')[0];
+      console.log(movie_id, formattedDate, title);
+      // Execute the first query
+      connection.query(
+        'INSERT INTO movies (movie_id, release_date, title) VALUES (?, ?, ?)', [movie_id, formattedDate, title],
+        (err, result1) => {
+          if (err) {
+            return connection.rollback(() => {
+              connection.release();
+              console.error('Error executing first query:', err);
+              return res.status(500).send('Error executing first query');
+            });
+          }
+          // Execute the second query
+        connection.query(
+        'INSERT INTO watched (user_id, movie_id, rating) VALUES (?, ?, ?)', [user_id, movie_id, rating],
+        (err, result2) => {
+          if (err) {
+            return connection.rollback(() => {
+              connection.release();
+              console.error('Error executing first query:', err);
+              return res.status(500).send('Error executing first query');
+            });
+          }
+          // Execute the third query
+          genre_ids.forEach(element => {
+          connection.query(
+            'INSERT INTO movie_genres (movie_id, genre_id) VALUES (?, ?)', [movie_id, element],
+            (err, result3) => {
+              if (err) {
+                return connection.rollback(() => {
+                  connection.release();
+                  console.error('Error executing second query:', err);
+                  return res.status(500).send('Error executing second query');
+                });
+              }
+              });
+            });
+            res.status(200).json({ message: 'Successfully added the movie to your watched list' });
+            connection.release();
+            }
+            );
+          }
+          );
+        }
+      );
+    }else{
+      let notInWatched = await inWatched(movie_id, user_id);
+      if(notInWatched == 0){
+      console.log("movie exists");
+      pool.getConnection((err, connection) => {
+        if (err) {
+          console.error('Error getting connection from pool:', err);
+          return res.status(500).send('Error getting connection from pool');
+        }
+        connection.query(
+          'INSERT INTO watched (user_id, movie_id, rating) VALUES (?, ?, ?)', [user_id, movie_id, rating],
+          (err, result2) => {
+            if (err) {
+              return connection.rollback(() => {
+                connection.release();
+                console.error('Error executing first query:', err);
+                return res.status(500).send('Error executing first query');
+              });
+            }
+            connection.release();
+          })});
+
+      return res.status(200).json({message: 'Successfully added the movie to your watched list'});
+      }else{
+        return res.status(200).json({message: 'The movie is already in your watched list'});
+      }
+    }
+});
+
+async function movieInTable(movie_id){
   var rowlength = 0;
-    pool.promise().query('SELECT * FROM movies WHERE movie_id = ?', [movie_id]).then(([rows, fields]) => {
-      rowlength= rows.length
+    await pool.promise().query('SELECT * FROM movies WHERE movie_id = ?', [movie_id]).then(([rows, fields]) => {
+      rowlength= rows.length;
+    })
+    .catch(console.log)
+    return new Promise(resolve => {
+        resolve(rowlength);     
+    });
+}
+
+async function inPlanToWatch(movie_id, user_id){
+  var rowlength = 0;
+    await pool.promise().query('SELECT * FROM plan_to_watch WHERE movie_id = ? AND user_id = ?', [movie_id,user_id]).then(([rows, fields]) => {
+      rowlength= rows.length;
+    })
+    .catch(console.log)
+    return new Promise(resolve => {
+        resolve(rowlength);     
+    });
+}
+
+async function inWatched(movie_id, user_id){
+  var rowlength = 0;
+    await pool.promise().query('SELECT * FROM watched WHERE movie_id = ? AND user_id = ?', [movie_id,user_id]).then(([rows, fields]) => {
+      rowlength= rows.length;
     })
     .catch(console.log)
     return new Promise(resolve => {
