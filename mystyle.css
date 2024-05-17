@@ -35,17 +35,38 @@
 
   /* Modal Content/Box */
 .modal-content {
-  height: 50px;
   font-size: 25px;
   background-color: #664e19;
   margin: 15% auto; /* 15% from the top and centered */
   padding: 20px;
   border: 2px solid rgb(241, 192, 118);
-  width: 80%; /* Could be more or less, depending on screen size */
   color: white;
   border-radius: 5px;
   text-align: center;
 }
+#modal-content{
+  width: 80%;
+}
+
+.detailTable{
+  width: 100%;
+  table-layout:fixed;
+}
+.detailTable th:nth-child(1){
+  width: 45%;
+}
+
+.detailTable th:nth-child(2){
+  width: 21%;
+}
+
+.detailTable th:nth-child(3){
+  width: 20%;
+}
+.detailTable th:nth-child(4){
+  width: 14%;
+}
+
 
 .popup {
   position: fixed;
@@ -87,6 +108,10 @@
     padding-top: 2px;
     padding-bottom: 2px;
     background-color: rgb(241, 192, 118);
+    color: black;
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
   } 
   th {
     padding: 12px;
@@ -106,7 +131,11 @@
     border-radius: 0px 5px 5px 0px;
   }
 
-  table{
+  .paginationBtn{
+    width: 5%;
+  }
+
+  .movieTable{
     margin-left: auto;
     margin-right: auto;
     width: 90%;
@@ -127,6 +156,19 @@
 
   #addWatchedButton{
     border: 2px solid rgb(241, 192, 118);
+  }
+
+  #settingsButton{
+    position: absolute;
+    right: 90px;
+    height:50px;
+    width: 100px;
+    background-color: black;
+    font-size: large;
+  }
+
+  .tabButton{
+    width: 30%;
   }
 
   #searchInput{
@@ -159,4 +201,11 @@
 
   body{
     background-color: rgb(226, 198, 163);
+  }
+
+  #pagination{
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
   }

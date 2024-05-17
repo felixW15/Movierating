@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="mystyle.css">
-  <title>Home</title>
+  <title>Profile</title>
 </head>
 <body>
   <div style="text-align:center">
-  <input type="text" id="searchInput">
   <button id="settingsButton">Settings</button>
   <input type="image" id="profileIcon" src="Icons/account.png"><br>
-  <button id="movieButton">search movie</button>
+  <button id="watchedButton" class="tabButton">Your Movielist</button>
+  <button id="ptwButton" class="tabButton">Plan to watch list</button>
   </div>
   <div id="mtoast" onclick="this.style.display='none'"></div>
   <div id="mDetails"></div>
@@ -35,6 +35,6 @@
     </div>
   
   </div>
-  <script src="client.js"></script> 
+  <script src="profileCode.js"></script> 
 </body>
 </html>

@@ -172,8 +172,6 @@ const options = {
         })
         .then(responseData => {
             console.log('Response from protected API:', responseData);
-            const userId = responseData.userId;
-            console.log(userId);
             window.location.href = 'index.html';
         })
         .catch(error => {

@@ -298,6 +298,18 @@ async function inWatched(movie_id, user_id){
     });
 }
 
+app.post('/api/getPlanToWatch', (req, res) => {
+  const { user_id } = req.body;
+  pool.query('SELECT * FROM plan_to_watch WHERE user_id = ?',[user_id], (error, results, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   // Retrieve user from database
