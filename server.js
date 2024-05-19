@@ -69,27 +69,6 @@ app.post('/api/register', (req, res) => {
   });
 });
 
-/* app.post('/api/addPlanToWatch', async(req, res) => {
-  const { movie_id, release_date, title, genre_ids, user_id } = req.body;
-  let connection = await pool.getConnection();
-  try{
-    await connection.beginTransaction();
-    // Store user in database
-    const result1 = await connection.query('SELECT * FROM users WHERE user_id = ?', [user_id]);
-    console.log(result1);
-    const result2 = await connection.query('SELECT * FROM genres WHERE genre_id = ?', [genre_ids[0]]);
-    console.log(result2);
-  }catch (error) {
-    // If an error occurs, rollback the transaction
-    await connection.rollback();
-    console.error('Error executing queries:', error);
-    res.status(500).send('Error executing queries');
-  } finally {
-    // Release the connection back to the pool
-    connection.release();
-  }
-}); */
-
 app.post('/api/addPlanToWatch',async (req, res) => {
   const { movie_id, release_date, title, genre_ids, user_id } = req.body;
   let movieNotInTable = await movieInTable(movie_id);
@@ -301,6 +280,54 @@ async function inWatched(movie_id, user_id){
 app.post('/api/getPlanToWatch', (req, res) => {
   const { user_id } = req.body;
   pool.query('SELECT * FROM plan_to_watch WHERE user_id = ?',[user_id], (error, results, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post('/api/getWatched', (req, res) => {
+  const { user_id } = req.body;
+  pool.query('SELECT * FROM watched WHERE user_id = ?',[user_id], (error, results, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post('/api/getAdmin', (req, res) => {
+  const { user_id } = req.body;
+  pool.query('SELECT admin FROM users WHERE user_id = ?',[user_id], (error, results, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.json({results});
+  });
+});
+
+app.post('/api/deletePlanToWatch', (req, res) => {
+  const { movie_id, user_id } = req.body;
+  pool.query('DELETE FROM plan_to_watch WHERE user_id = ? AND movie_id = ?',[user_id,movie_id], (error, results, fields) => {
+    if (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+    res.json(results);
+  });
+});
+
+app.post('/api/deleteWatched', (req, res) => {
+  const { movie_id, user_id } = req.body;
+  pool.query('DELETE FROM watched WHERE user_id = ? AND movie_id = ?',[user_id,movie_id], (error, results, fields) => {
     if (error) {
       console.error(error);
       res.status(500).json({ error: 'Internal server error' });

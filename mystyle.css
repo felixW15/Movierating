@@ -78,7 +78,7 @@
   color: white;
   border-radius: 5px;
   text-align: center;
-  width: 350px;
+  width: 400px;
 }
 
 .popup-wrapper {
@@ -156,6 +156,7 @@
 
   #addWatchedButton{
     border: 2px solid rgb(241, 192, 118);
+    font-size: large;
   }
 
   #settingsButton{
@@ -164,7 +165,8 @@
     height:50px;
     width: 100px;
     background-color: black;
-    font-size: large;
+    font-size: large;    
+    border-radius: 5px;
   }
 
   .tabButton{
@@ -208,4 +210,15 @@
     margin: 0 auto;
     display: flex;
     justify-content: center;
+  }
+
+  #adminButton{
+    display: none;
+    position: absolute;
+    right: 190px;
+    height:50px;
+    width: 100px;
+    background-color: black;
+    font-size: medium;    
+    border-radius: 5px;
   }

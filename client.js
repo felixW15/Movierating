@@ -50,16 +50,6 @@ function createTable(data) {
     var btn = document.createElement('button');
     btn.innerHTML = "Add to watchlist";
     btn.addEventListener("click", (function(e){
-        e = e || window.event;
-        var data = [];
-        var target = e.srcElement || e.target;
-        while (target && target.nodeName !== "TR") {
-            target = target.parentNode;
-        }
-        if (target) {
-            var cells = target.getElementsByTagName("td");
-            data.push(cells[1].innerHTML);
-        } 
         const rect = btn.getBoundingClientRect();
         // Set the popup position
         popup.style.left = `${rect.left - rect.width - 200}px`;
