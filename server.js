@@ -301,6 +301,38 @@ app.post('/api/getWatched', (req, res) => {
   });
 });
 
+app.post('/api/getMailByMovie', (req, res) => {
+  const { movie_id, radioType } = req.body;
+    if(radioType == 2){
+      pool.query('SELECT DISTINCT users.email, users.username FROM users JOIN (SELECT user_id FROM plan_to_watch WHERE movie_id = ? UNION SELECT user_id FROM watched WHERE movie_id = ?) AS combined ON users.user_id = combined.user_id;',[movie_id, movie_id], (error, results, fields) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        res.json(results);
+      });
+    }else if(radioType == 0){
+      pool.query('SELECT DISTINCT users.email, users.username FROM users JOIN (SELECT user_id FROM watched WHERE movie_id = ? ) AS combined ON users.user_id = combined.user_id;',[movie_id], (error, results, fields) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        res.json(results);
+      });
+    }else if(radioType == 1){
+      pool.query('SELECT DISTINCT users.email, users.username FROM users JOIN (SELECT user_id FROM plan_to_watch WHERE movie_id = ?) AS combined ON users.user_id = combined.user_id;',[movie_id], (error, results, fields) => {
+        if (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal server error' });
+          return;
+        }
+        res.json(results);
+      });
+    }
+});
+
 app.post('/api/getAdmin', (req, res) => {
   const { user_id } = req.body;
   pool.query('SELECT admin FROM users WHERE user_id = ?',[user_id], (error, results, fields) => {

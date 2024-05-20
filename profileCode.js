@@ -8,6 +8,13 @@ window.onload = async function(){
         const admin = await getAdmin(user_id);
         if(admin.results[0].admin == 0){
             adminButton.style.display = "block";
+            adminButton.addEventListener("click", (async function(e){
+                if(sessionStorage.getItem("accessToken") == null){
+                    window.location.href = 'login.html';
+                }else{
+                    protectedRouteAdmin(sessionStorage.getItem("accessToken"))
+                }
+            }));
         }else if(admin.results[0].admin == 1){
             console.log("is not admin");
         }
@@ -40,6 +47,32 @@ async function protectedRoute(data) {
                 window.location.href = 'login.html';
                 console.error('Error sending data to API:', error);
             });
+}
+
+function protectedRouteAdmin(data) {
+    const url = 'http://localhost:3000/api/protected'; // Change the URL as per your API endpoint
+    const options = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${data}`
+      },
+    };
+    
+        fetch(url, options)
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(responseData => {
+                console.log('Response from protected API:', responseData);
+                window.location.href = 'admin.html';
+            })
+            .catch(error => {
+                console.error('Error sending data to API:', error);
+            }  );
 }
 
 async function getAdmin(userId){

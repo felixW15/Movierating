@@ -100,6 +100,7 @@
   float: right;
   font-size: 35px;
   font-weight: bold;
+  z-index: 2;
 }
 
   td {
@@ -220,5 +221,43 @@
     width: 100px;
     background-color: black;
     font-size: medium;    
+    border-radius: 5px;
+  }
+
+  .container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    z-index: 3;
+  }
+
+  #radiodiv{
+    text-align: left;
+  }
+
+  
+  
+  #loginDiv{
+    text-align: center;
+    margin-top: 100px;
+
+  }
+  #registerDiv{
+    display: none;
+    margin-top: 100px;
+    text-align: center;
+  }
+  .loginButtons{
+    width: 20%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    font-size: large;
     border-radius: 5px;
   }

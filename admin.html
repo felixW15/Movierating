@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="mystyle.css">
+  <title>Admin</title>
+</head>
+<body>
+  <div style="text-align:center">
+  <input type="text" id="searchInput">
+  <button id="settingsButton">Settings</button>
+  <input type="image" id="profileIcon" src="Icons/account.png"><br>
+  <button id="movieButton">search movie</button>
+  </div>
+  <div id="mtoast" onclick="this.style.display='none'"></div>
+  <div id="mDetails"></div>
+  <div id="tableDiv"></div>
+  <div id="pagination-wrapper">
+    <div id="pagination"></div>
+  </div>
+  <div id="popup-wrapper" class="popup-wrapper">
+  <div id="popup" class="popup">
+      <label for="" id="popupLabel">Are you sure you want to delete this entry?</label><br><br>
+      <button id="addWatchedButton">Delete</button>
+  </div>
+  </div>
+  <div id="myModal" class="modal">
+    <div class="modal-content" id="modal-content">
+      <span class="close">&times;</span>
+      <label for="" id="modalLabel"></label><br><br>
+      <div id="radiodiv">
+      <label for="" id="">get all email adresses of users that have this movie saved in their:</label><br>
+      <label class="container">
+        <input type="radio" checked="checked" name="radio"   value="0">watched list
+    </label>
+    <label class="container">
+        <input type="radio" name="radio" value="1">plan to watch list
+    </label>
+    <label class="container">
+        <input type="radio" name="radio" value="2">both watched and plan to watch lists
+    </label>
+    <button id="getEmail">Get email list</button>
+    </div>
+      <div id="modalTable" class="modalTable">
+      </div>
+    </div>
+  
+  </div>
+  <script src="adminCode.js"></script> 
+</body>
+</html>

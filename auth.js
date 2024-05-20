@@ -1,26 +1,3 @@
-    // Define the fetch function to fetch data from the API
-async function fetchDataFromAPI() {
-    const url = 'http://localhost:3000/api/data'; // Change the URL as per your API endpoint
-
-    const response = await fetch(url)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Data from API:', data);
-        return data;
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
-        return error;
-      });
-    
-    createTable(response);
-  }
-
 function createTable(data) {
 const div = document.getElementById('tableDiv');
 div.innerHTML = "";
@@ -52,37 +29,6 @@ data.forEach(item => {
 // Append the table to the HTML document
 div.appendChild(table);
 }
-
-function sendDataToAPI(data) {
-const url = 'http://localhost:3000/api/post'; // Change the URL as per your API endpoint
-const options = {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json' // Specify the content type
-  },
-  body: JSON.stringify(data) // Convert data to JSON string
-};
-
-    fetch(url, options)
-        .then(response => {
-            if (!response.ok) {
-            throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(responseData => {
-            console.log('Response from API:', responseData);
-        })
-        .catch(error => {
-            console.error('Error sending data to API:', error);
-        });
-        }
-
-// Example data
-const postData = {
-key1: 'value1',
-key2: 'value2'
-};
 
 function registerUser(data) {
 const url = 'http://localhost:3000/api/register'; // Change the URL as per your API endpoint
@@ -179,7 +125,7 @@ const options = {
         });
         }
 
-document.getElementById('fetchButton').addEventListener('click', function() { fetchDataFromAPI(); }, false);
-document.getElementById('postButton').addEventListener('click',  function() { sendDataToAPI(postData); }, false);
 document.getElementById('registerButton').addEventListener('click',  function() { registerUser(getRegisterData()); }, false);
 document.getElementById('loginButton').addEventListener('click',  function() { loginUser(getLoginData()); }, false);
+document.getElementById('newButton').addEventListener('click',  function() { document.getElementById('loginDiv').style.display = "none"; document.getElementById('registerDiv').style.display = "block";}, false);
+document.getElementById('backButton').addEventListener('click',  function() { document.getElementById('loginDiv').style.display = "block"; document.getElementById('registerDiv').style.display = "none";}, false);

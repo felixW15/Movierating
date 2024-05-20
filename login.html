@@ -3,24 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="mystyle.css">
   <title>Login</title>
 </head>
 <body>
-  <button id="fetchButton">Fetch Data from API</button>
-  <button id="postButton">Post Data to API</button><br>
+  <div id="loginDiv">
+    <label for="" id="popupLabel">Enter your login Information:</label><br><br>
    <label>Username</label>
    <input type="text" id="loginusername"><br>
    <label>Password</label>
    <input type="text" id="loginpassword"><br>
-   <button id="loginButton">login User</button><br>
+   <button id="loginButton" class="loginButtons">login</button><br>
+   <button id="newButton" class="loginButtons">register new user</button>
+  </div>
+  <div id="registerDiv">
+    <label for="" id="popupLabel">Register a new account:</label><br><br>
    <label>Username</label>
    <input type="text" id="registerusername"><br>
    <label>E-Mail</label>
    <input type="text" id="registeremail"><br>
    <label>Password</label>
    <input type="text" id="registerpassword"><br>
-   <button id="registerButton">register User</button><br>
-   <div id="tableDiv"></div>
+   <button id="registerButton" class="loginButtons">submit</button><br>
+   <button id="backButton" class="loginButtons">back to login</button>
+  </div>
 <script src="auth.js">
 </script>
 </body>
