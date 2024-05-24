@@ -1,12 +1,12 @@
-var mysql = require('mysql');
+var mysql = require('mysql2');
 
-var con = mysql.createConnection({
+const con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
-  database: "mydb"
+  password: "FWroot15_",
+  database: "mydb",
+  port: 3307
 });
-
 /* con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -36,25 +36,15 @@ var con = mysql.createConnection({
     console.log(result);
   });
 }); */
-/* con.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-  var sql = "DESCRIBE plan_to_watch";
-  con.query(sql, function (err, result) {
-    if (err) throw err;
-    console.log(result);
-  });
-}); */
-/* 
+ 
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
-  var sql = "SELECT release_date FROM movies";
+  var sql = "UPDATE users SET admin=0 WHERE user_id=1";
   con.query(sql, function (err, result) {
     if (err) throw err;
-    console.log(result[0].release_date.toLocaleString("en-US", {timeZone: 'Europe/Berlin' }).split(" ")[0]);
   });
-}); */
+}); 
 
 const genres = [
     {
@@ -133,7 +123,7 @@ const genres = [
       "id": 37,
       "name": "Western"
     }]
-
+/* 
 con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
@@ -148,7 +138,7 @@ con.connect(function(err) {
       }
     });
   });
-});
+}); */
 
 /* SELECT DISTINCT users.email
 FROM users

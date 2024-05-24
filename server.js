@@ -16,6 +16,7 @@ const pool = mysql.createPool({
   database: "mydb",
   waitForConnections: true,
   connectionLimit: 100,
+  port:3307
 });
 app.use(express.json());
 
@@ -86,7 +87,6 @@ app.post('/api/addPlanToWatch',async (req, res) => {
         return res.status(500).send('Error starting transaction');
       } */
       const formattedDate = new Date(release_date).toISOString().split('T')[0];
-      console.log(movie_id, formattedDate, title);
       // Execute the first query
       connection.query(
         'INSERT INTO movies (movie_id, release_date, title) VALUES (?, ?, ?)', [movie_id, formattedDate, title],
@@ -134,7 +134,6 @@ app.post('/api/addPlanToWatch',async (req, res) => {
     /* }); */ }else{
       let notInPlanToWatch = await inPlanToWatch(movie_id, user_id);
       if(notInPlanToWatch == 0){
-      console.log("movie exists");
       pool.getConnection((err, connection) => {
         if (err) {
           console.error('Error getting connection from pool:', err);
@@ -170,7 +169,6 @@ app.post('/api/addWatched',async (req, res) => {
       return res.status(500).send('Error getting connection from pool');
     }
       const formattedDate = new Date(release_date).toISOString().split('T')[0];
-      console.log(movie_id, formattedDate, title);
       // Execute the first query
       connection.query(
         'INSERT INTO movies (movie_id, release_date, title) VALUES (?, ?, ?)', [movie_id, formattedDate, title],
@@ -218,7 +216,6 @@ app.post('/api/addWatched',async (req, res) => {
     }else{
       let notInWatched = await inWatched(movie_id, user_id);
       if(notInWatched == 0){
-      console.log("movie exists");
       pool.getConnection((err, connection) => {
         if (err) {
           console.error('Error getting connection from pool:', err);
